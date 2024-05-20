@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            --width: 600px;
+            --height: 400px;
+        }
+        
+        .main{
+            width: var(--width);
+            height: var(--height);
+            position: relative;
+        }
+        img, canvas{
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            inset: 0;
+        }
+        canvas{
+            z-index: 99;
+        }
+    </style>
+</head>
+<body>
+    <div class="main">
+        <img src="https://picsum.photos/600/400" alt="">
+        <canvas id="canvas"></canvas>
+    </div>
+</body>
+<script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = 600
+    canvas.height = 400
+    ctx.fillStyle = 'rgb(0,0,0)'
+    ctx.fillRect(0,0, 600, 400)
+    ctx.fill()
+
+   
+
+    ctx.fillStyle = '#fff'
+    ctx.font = '12px SimSun, Songti SC'
+    ctx.textAlign='center'
+    ctx.fillText('刮一刮', 300, 200)
+
+    let flag = false
+
+    canvas.addEventListener('mousedown', (e) => {
+        flag = true
+        draw(e)
+    })
+    canvas.addEventListener('mousemove', (e) => {
+        draw(e)
+    })
+
+    canvas.addEventListener('mouseup', (e) => {
+        flag = false
+        clear()
+    })
+
+    function draw(e) {
+        if (flag){
+            ctx.globalCompositeOperation = 'destination-out'
+            const casRect = canvas.getBoundingClientRect()
+            ctx.fillStyle = '#fff'
+            ctx.moveTo(e.clientX - casRect.left, e.clientY - casRect.top)
+            
+            ctx.arc(e.clientX - casRect.left, e.clientY - casRect.top, 20, 0, 2 * Math.PI)
+            ctx.fill()
+        }
+    }
+
+    function clear() {
+        const canvasData = ctx.getImageData(0,0, 600, 400)
+
+        const pixelCount = canvasData.data.length / 4
+        let num = 0;
+        for (var i = 0; i < canvasData.data.length;i+=4) {
+            if (canvasData.data[i + 3] === 0) {
+                num++
+            }
+        }
+        if (num > pixelCount * 0.5) {
+            canvas.remove()
+        }
+    }
+
+</script>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>canvas</title>
+    <style>
+        *{
+            padding: 0;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas" ></canvas>
+</body>
+<script>
+    const fontsize = 20;
+    const canvas = document.getElementById('canvas')
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth  * devicePixelRatio;
+    canvas.height = window.innerWidth *devicePixelRatio;
+    const column = Math.floor(canvas.width / fontsize);
+
+    const fontArr = new Array(column).fill(0)
+   console.log(column, fontArr, 'fontArr')
+    function draw() {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        for(var i = 0; i< column; i++) {
+            ctx.font = `${fontsize}px SimSun, Songti SC`
+            ctx.fillStyle= getRandomColor()
+            const x = i * fontsize
+            const y = fontArr[i + 1] * fontsize
+            ctx.fillText(getRandomWord(), i * fontsize, fontArr[i] * fontsize)
+            if (fontArr[i] * fontsize > canvas.height && Math.random() > 0.99) {
+                fontArr[i] = 0
+            } else {
+                fontArr[i] += 1
+            }
+        }
+        requestAnimationFrame(draw)
+    }
+    requestAnimationFrame(draw)
+
+    function getRandomWord() {
+        var str = 'linmengqi'
+        return str[Math.floor(Math.random() * str.length)]
+    }
+
+    function getRandomColor() {
+        var str = '#'
+        var colorStr = '1234567890abcdef'
+        for(var i = 0; i < 6;i++) {
+            str += colorStr[Math.floor(Math.random() * colorStr.length)]
+        }
+        return str
+    }
+
+</script>
+</html>

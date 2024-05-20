@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="canvas"></canvas>
+    <script>
+        class Ball {
+            constructor(x, y, r, mx, my,color) {
+                this.x = x;
+                this.y = y;
+                this.r = r;
+                this.mx = mx;
+                this.my = my;
+                this.color = color
+            }
+            drawBall() {
+                ctx.beginPath();
+                ctx.fillStyle = this.color;
+                ctx.arc(this.x, this.y, this.r, 0, 2 * Math.PI);
+                ctx.fill()
+                ctx.closePath()
+            }
+            move() {
+                // ctx.clearRect(0, 0, canvas.width, canvas.height)
+                if ((this.x + this.r )> +window.innerWidth || (this.x - this.r )< 0) {
+                    this.mx = -this.mx;
+                }
+                if ((this.y + this.r) > +window.innerHeight || (this.y - this.r) < 0) {
+                    this.my = -this.my;
+                }
+                this.x += this.mx
+                this.y += this.my
+            }
+
+        }
+    </script>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const listBall = []
+        ctx.fillRect(0,0,canvas.width,canvas.height)
+        for (var i = 0; i < 100; i++) {
+            const ball = new Ball(Math.random() * window.innerWidth, Math.random() * window.innerHeight, 3, getRandomMove(), getRandomMove(), getRandomColor())
+            ball.drawBall()
+            listBall.push(ball)
+        }
+        function draw() {
+            ctx.clearRect(0,0,canvas.width, canvas.height)
+            for(var i = 0;i< listBall.length;i++) {
+                listBall[i].move()
+                listBall[i].drawBall()
+                for(var j = 0;j<listBall.length;j++) {
+                    drawLine(listBall[i].x, listBall[i].y, listBall[j].x, listBall[j].y)
+                }
+            }
+            
+            requestAnimationFrame(draw)
+        }
+        // setInterval(() => {
+        //     draw()
+        // }, 100)
+        requestAnimationFrame(draw)
+        
+        function getRandomColor() {
+            var str = '#'
+            var colorStr = '1234567890abcdef'
+            for (var i = 0; i < 6; i++) {
+                str += colorStr[Math.floor(Math.random() * colorStr.length)]
+            }
+            return str;
+        }
+        function drawLine(x, y, tx, ty) {
+            ctx.beginPath();
+            ctx.strokeStyle = getRandomColor();
+            if (Math.sqrt((ty-y)*(ty-y) + (tx-x)*(tx-x)) < 120) {
+                ctx.moveTo(x, y);
+                ctx.lineTo(tx, ty);
+                ctx.stroke()
+            }
+            ctx.closePath()
+        }
+        function getRandomMove() {
+            return Math.random() > 0.5 ? Math.random() * 1 : -Math.random() * 1
+        }
+
+        canvas.addEventListener('mousemove', (event) => {
+            
+        })
+    </script>
+</body>
+
+</html>
